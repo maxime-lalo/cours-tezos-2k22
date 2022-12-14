@@ -3,17 +3,18 @@ ifndef LIGO
 endif
 
 compile = $(LIGO) compile contract ./src/contracts/$(1) -o ./src/compiled/$(2)
-# test-ligo = $(LIGO) run test ./contracts/test/$(1)
+testing = $(LIGO) run test ./tests/$(1)
 
 default: help
 
 help: 
 	@echo "Usage: make [target]"
 	@echo "Targets:"
-	@echo "  clean   - Cleans the compiled contracts"
-	@echo "  compile - Compiles contracts to Michelson"
-	@echo "  help    - Shows this help message"
+	@echo "  clean     - Cleans the compiled contracts"
+	@echo "  compile   - Compiles contracts to Michelson"
+	@echo "  help      - Shows this help message"
 	@echo "  recompile - Cleans and compiles contracts"
+	@echo "  test      - Runs tests"
 
 clean:
 	@echo "Cleaning..."
@@ -26,3 +27,14 @@ compile:
 	@echo "Compiled successfully"
 
 recompile: clean compile
+
+test: test-ligo test-integration
+
+test-ligo:
+	@echo "Testing contracts..."
+	@$(call testing,increment.test.mligo)
+	@$(call testing,decrement.test.mligo)
+	@echo "Tested successfully"
+
+test-integration:
+	@echo "Testing integration..."
