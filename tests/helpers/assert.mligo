@@ -7,4 +7,11 @@ let tx_failure (res, expected_error: test_exec_result * test_exec_error) : unit 
 let tx_success (res: test_exec_result) : unit =
 	match res with
 		Success _ -> ()
-		| Fail _ -> failwith "contract failure but expected success"
+		| Fail (error) ->
+            (match error with 
+                Rejected (reject_err) -> 
+                    let (err_str, _) = reject_err in
+                    failwith err_str
+                | Balance_too_low _ -> failwith "contract failed: balance too low"
+                | Other s -> failwith s
+            )
