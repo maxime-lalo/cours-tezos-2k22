@@ -5,3 +5,5 @@
 .ligo-work
 
 src/compiled/*
+
+node_modules/
