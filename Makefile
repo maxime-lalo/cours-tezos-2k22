@@ -51,11 +51,12 @@ test: test-ligo test-integration
 
 test-ligo:
 	@echo "Testing contracts..."
-	# @$(call testing,contract_1/accept_admin.test.mligo)
-	# @$(call testing,contract_1/add_admin.test.mligo)
-	# @$(call testing,contract_1/remove_admin.test.mligo)
-	# @$(call testing,contract_1/pay_contract_fees.test.mligo)
-	# @$(call testing,contract_1/set_text.test.mligo)
+	@$(call testing,contract_1/accept_admin.test.mligo)
+	@$(call testing,contract_1/add_admin.test.mligo)
+	@$(call testing,contract_1/remove_admin.test.mligo)
+	@$(call testing,contract_1/pay_contract_fees.test.mligo)
+	@$(call testing,contract_1/set_text.test.mligo)
+	@$(call testing,contract_2/add_price.test.mligo)
 	@echo "Tested successfully"
 
 test-integration:
