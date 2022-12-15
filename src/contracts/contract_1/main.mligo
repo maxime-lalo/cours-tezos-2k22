@@ -58,7 +58,7 @@ let accept_admin(_accept_admin_param, store: Parameter.accept_admin_param * Stor
 
 let remove_admin(remove_admin_param, store: Parameter.remove_admin_param * Storage.t) : Storage.t = 
 	let sender:address = Tezos.get_sender() in
-	if(sender <> remove_admin_param) then 
+	if(sender = remove_admin_param) then 
 		failwith Errors.cant_remove_self_admin
 	else
 		let admin_list : Storage.admin_mapping = 

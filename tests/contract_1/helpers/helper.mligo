@@ -21,3 +21,9 @@ let add_admin_success(p, contr: address * contr) =
 
 let add_admin_failure(p, contr, error: address * contr * string) =
     Assert.tx_failure(call(AddAdmin(p), contr), error)
+
+let remove_admin_success(p, contr: address * contr) =
+    Assert.tx_success(call(RemoveAdmin(p), contr))
+
+let remove_admin_failure(p, contr, error: address * contr * string) =
+    Assert.tx_failure(call(RemoveAdmin(p), contr), error)

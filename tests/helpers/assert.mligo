@@ -3,7 +3,7 @@ let tx_failure (res, expected_error: test_exec_result * string) : unit =
 	match res with
 		Success _ -> failwith "Transaction should fail"
 		| Fail (Rejected(actual, _ )) -> 
-			//let _ = Test.println(Test.to_string(actual)) in
+			let _ = Test.println(Test.to_string(actual)) in
 			assert ( actual = expected)
 		| Fail (Balance_too_low _) -> failwith "Failed:  Balance too low"
 		| Fail (Other s) -> failwith s
