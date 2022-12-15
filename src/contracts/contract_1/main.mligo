@@ -15,9 +15,9 @@ type return = operation list * Storage.t
 
 // Utility functions 
 let get_tier(count:int) : Storage.tier = 
-	if(count < 10) then Moldu
-	else if(count < 20) then Bronze
-	else if(count < 30) then Gold
+	if(count < 2) then Moldu
+	else if(count < 3) then Bronze
+	else if(count < 4) then Gold
 	else Platinum
 
 // Assert List

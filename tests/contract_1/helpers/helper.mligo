@@ -10,6 +10,9 @@ let get_storage(taddr : taddr) =
 let call (p, contr : Main.action * contr) =
     Test.transfer_to_contract contr (p) 0mutez
 
+let call_amount(p, contr, amount : Main.action * contr * tez) =
+    Test.transfer_to_contract contr (p) amount
+
 let accept_admin_success(contr: contr) = 
     Assert.tx_success(call(AcceptAdmin, contr))
 
@@ -27,3 +30,9 @@ let remove_admin_success(p, contr: address * contr) =
 
 let remove_admin_failure(p, contr, error: address * contr * string) =
     Assert.tx_failure(call(RemoveAdmin(p), contr), error)
+
+let pay_contract_fees_success(contr, amount: contr * tez) =
+    Assert.tx_success(call_amount(PayContractFees, contr, amount))
+
+let pay_contract_fees_failure(contr, amount, error: contr * tez * string) =
+    Assert.tx_failure(call_amount(PayContractFees, contr, amount), error)
