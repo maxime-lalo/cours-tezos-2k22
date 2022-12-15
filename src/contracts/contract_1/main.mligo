@@ -7,6 +7,7 @@ type action =
 	| NukeText of Parameter.nuke_text_param
 	| AddAdmin of Parameter.add_admin_param
 	| AcceptAdmin of Parameter.accept_admin_param
+	| RemoveAdmin of Parameter.remove_admin_param
 	| Reset of unit
 
 type return = operation list * Storage.t
@@ -33,6 +34,18 @@ let accept_admin(_accept_admin_param, store: Parameter.accept_admin_param * Stor
 			| None -> failwith Errors.no_admin_invitation
 		in
 	{ store with admin_list }
+
+let remove_admin(remove_admin_param, store: Parameter.remove_admin_param * Storage.t) : Storage.t = 
+	let sender:address = Tezos.get_sender() in
+	if(sender <> remove_admin_param) then 
+		failwith Errors.cant_remove_self_admin
+	else
+		let admin_list : Storage.admin_mapping = 
+			match Map.find_opt remove_admin_param store.admin_list with
+				Some _ -> Map.remove remove_admin_param store.admin_list
+				| None -> failwith Errors.wasnt_admin
+			in
+		{ store with admin_list }
 
 let assert_blacklist(assert_blacklist_param, store : Parameter.assert_blacklist_param * Storage.t) : unit = 
 	let is_blacklisted = fun (user : Storage.user) -> if(user = assert_blacklist_param) then failwith Errors.blacklisted else () in
@@ -66,6 +79,9 @@ let main (action, store : action * Storage.t) : return =
 			let _ : unit = assert_admin((), store) in 
 			add_admin(user, store)
 		| AcceptAdmin _ -> accept_admin((), store)	
+		| RemoveAdmin(user) -> 
+			let _ : unit = assert_admin((), store) in 
+			remove_admin(user, store)
 		| Reset -> { store with user_map = Map.empty }
 		in
 	(([] : operation list), new_store)
