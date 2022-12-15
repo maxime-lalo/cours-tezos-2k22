@@ -1,9 +1,9 @@
 type user = address
 type text = string
 
-type tier = Platinum | Gold | Bronze | Moldu
+type tier = Moldu | Bronze | Gold | Platinum
 
-type user_mapping = (user, (text * tier) ) map
+type user_mapping = (user, (text * tier * int) ) map
 type blacklist_mapping = user list
 
 type admin_mapping = (user, bool) map

@@ -13,6 +13,13 @@ type action =
 
 type return = operation list * Storage.t
 
+// Utility functions 
+let get_tier(count:int) : Storage.tier = 
+	if(count < 10) then Moldu
+	else if(count < 20) then Bronze
+	else if(count < 30) then Gold
+	else Platinum
+	
 // Assert List
 let assert_admin(_assert_admin_param, store: Parameter.assert_admin_param * Storage.t) : unit =
 	match  Map.find_opt(Tezos.get_sender():address) store.admin_list with
@@ -66,8 +73,10 @@ let set_text(set_text_param, store : Parameter.set_text_param * Storage.t) : Sto
 	let sender: address = Tezos.get_sender() in
 	let user_map: Storage.user_mapping = 
 		match Map.find_opt sender store.user_map with
-			Some _ -> Map.update sender (Some(set_text_param, Moldu)) store.user_map
-			| None -> Map.add sender (set_text_param, Moldu) store.user_map
+			Some(last_entry) -> 
+				let (_text, _tier, count) = last_entry in
+				Map.update sender (Some(set_text_param, get_tier(count + 1), count + 1)) store.user_map
+			| None -> Map.add sender (set_text_param, get_tier(1) , 1) store.user_map
 		in
 	{ store with user_map }
 
