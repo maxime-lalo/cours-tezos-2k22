@@ -15,9 +15,16 @@ let originate_contract (init_storage: Main.Storage.t) =
     let addr = Tezos.address contr in
     (addr, taddr, contr)
 
-let base_storage: Main.Storage.t = {
-	user_map = Map.empty;
-	user_blacklist = [];
-	admin_list = Map.empty;
-	has_paid = Map.empty;
-}
+let base_admin : address = "tz1cGkwCNGQqeA5BcAUqi8KoZxwmLfMkJEbR"
+
+let get_base_storage(defaultAdmin: address) : Main.Storage.t = 
+    let base_storage: Main.Storage.t = {
+        user_map = Map.empty;
+        user_blacklist = [];
+        admin_list = Map.literal[
+            (defaultAdmin, true)
+        ];
+        has_paid = Map.empty;
+    }
+    in
+    base_storage
