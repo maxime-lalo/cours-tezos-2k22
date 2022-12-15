@@ -8,16 +8,24 @@ type action =
 	| AddAdmin of Parameter.add_admin_param
 	| AcceptAdmin of Parameter.accept_admin_param
 	| RemoveAdmin of Parameter.remove_admin_param
+	| PayContractFees of Parameter.pay_contract_fees_param
 	| Reset of unit
 
 type return = operation list * Storage.t
 
+// Assert List
 let assert_admin(_assert_admin_param, store: Parameter.assert_admin_param * Storage.t) : unit =
 	match  Map.find_opt(Tezos.get_sender():address) store.admin_list with
 		Some (is_admin) -> 
 			if is_admin then () else failwith Errors.not_admin
 		| None -> failwith Errors.not_admin
 
+let assert_blacklist(assert_blacklist_param, store : Parameter.assert_blacklist_param * Storage.t) : unit = 
+	let is_blacklisted = fun (user : Storage.user) -> if(user = assert_blacklist_param) then failwith Errors.blacklisted else () in
+	let _ = List.iter is_blacklisted store.user_blacklist in
+	()
+
+// Admin management
 let add_admin(add_admin_param, store: Parameter.add_admin_param * Storage.t) : Storage.t = 
 	let admin_list : Storage.admin_mapping = 
 		match Map.find_opt add_admin_param store.admin_list with
@@ -47,11 +55,7 @@ let remove_admin(remove_admin_param, store: Parameter.remove_admin_param * Stora
 			in
 		{ store with admin_list }
 
-let assert_blacklist(assert_blacklist_param, store : Parameter.assert_blacklist_param * Storage.t) : unit = 
-	let is_blacklisted = fun (user : Storage.user) -> if(user = assert_blacklist_param) then failwith Errors.blacklisted else () in
-	let _ = List.iter is_blacklisted store.user_blacklist in
-	()
-
+// Contract functions
 let set_text(set_text_param, store : Parameter.set_text_param * Storage.t) : Storage.t =
 	let sender: address = Tezos.get_sender() in
 	let user_map: Storage.user_mapping = 
@@ -61,6 +65,20 @@ let set_text(set_text_param, store : Parameter.set_text_param * Storage.t) : Sto
 		in
 	{ store with user_map }
 
+let pay_contract_fees(_pay_contract_fees_param, store : Parameter.pay_contract_fees_param * Storage.t) : Storage.t =
+	let amount : tez = Tezos.get_amount() in
+	let sender: address = Tezos.get_sender() in
+	if(amount = 1tez) then
+		match Map.find_opt sender store.has_paid with
+			Some _ -> failwith Errors.fees_already_paid
+			| None -> 
+				let has_paid: Storage.has_paid_mapping = Map.add sender true store.has_paid in
+				{store with has_paid}
+	else
+		failwith Errors.wrong_fees_amount
+	store
+
+// Admin functions
 let nuke_text(nuke_text_param, store : Parameter.nuke_text_param * Storage.t) : Storage.t =
 	match Map.find_opt nuke_text_param store.user_map with
 		Some _ -> 
@@ -69,6 +87,7 @@ let nuke_text(nuke_text_param, store : Parameter.nuke_text_param * Storage.t) : 
 			{ store with user_map; user_blacklist }
 		| None -> failwith Errors.text_not_found
 
+// Main
 let main (action, store : action * Storage.t) : return =
 	let new_store : Storage.t = match action with
 		SetText (text) -> set_text (text, store)
@@ -82,8 +101,11 @@ let main (action, store : action * Storage.t) : return =
 		| RemoveAdmin(user) -> 
 			let _ : unit = assert_admin((), store) in 
 			remove_admin(user, store)
+		| PayContractFees _ -> pay_contract_fees((), store)
 		| Reset -> { store with user_map = Map.empty }
 		in
 	(([] : operation list), new_store)
 
+
+// Views
 [@view] let get_storage ((),s: unit * Storage.t) : Storage.t = s

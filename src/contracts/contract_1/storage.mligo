@@ -7,9 +7,11 @@ type user_mapping = (user, (text * tier) ) map
 type blacklist_mapping = user list
 
 type admin_mapping = (user, bool) map
+type has_paid_mapping = (user, bool) map
 
 type t = {
 	user_map : user_mapping;
 	user_blacklist: blacklist_mapping;
 	admin_list: admin_mapping;
+	has_paid: has_paid_mapping;
 }

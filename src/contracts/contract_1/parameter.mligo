@@ -5,3 +5,4 @@ type assert_blacklist_param = address
 type add_admin_param = address
 type accept_admin_param = unit
 type remove_admin_param = address
+type pay_contract_fees_param = unit 
