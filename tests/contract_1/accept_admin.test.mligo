@@ -4,9 +4,10 @@
 
 let test_not_invited = 
     let accounts = Bootstrap.boot_accounts(Tezos.get_now()) in
-    let (_, _taddr, _) = Bootstrap.originate_contract(Bootstrap.base_storage) in
+    let (_, _taddr, contr) = Bootstrap.originate_contract(Bootstrap.base_storage) in
     let () = Test.set_source(accounts.0) in
-    unit
+    Helper.accept_admin_failure(contr)
+
 
 // let test_successful_originate =
 //     let accounts = Bootstrap.boot_accounts(Tezos.get_now()) in

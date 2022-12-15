@@ -10,6 +10,12 @@ let get_storage(taddr : taddr) =
 let call (p, contr : Main.action * contr) =
     Test.transfer_to_contract contr (p) 0mutez
 
+let accept_admin_failure(contr : contr) =
+    Assert.tx_failure(call(AcceptAdmin, contr), Main.Errors.no_admin_invitation)
+
+let accept_admin_success(contr: contr) = 
+    Assert.tx_success(call(AcceptAdmin, contr))
+
 // //Increment functions
 // let call_increment (p, contr : int * contr) =
 //     call(Increment(p), contr)
