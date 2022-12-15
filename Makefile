@@ -51,8 +51,7 @@ test: test-ligo test-integration
 
 test-ligo:
 	@echo "Testing contracts..."
-	@$(call testing,increment.test.mligo)
-	@$(call testing,decrement.test.mligo)
+	@$(call testing,contract_1/accept_admin.test.mligo)
 	@echo "Tested successfully"
 
 test-integration:

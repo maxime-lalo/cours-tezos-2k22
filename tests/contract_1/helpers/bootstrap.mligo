@@ -1,4 +1,4 @@
-#import "../../src/contracts/main.mligo" "Main"
+#import "../../../src/contracts/contract_1/main.mligo" "Main"
 
 let boot_accounts (inittime : timestamp) =
     let () = Test.reset_state_at inittime 6n ([] : tez list) in
@@ -9,10 +9,15 @@ let boot_accounts (inittime : timestamp) =
     in
     accounts
 
-let originate_contract (init_storage: Main.storage) = 
+let originate_contract (init_storage: Main.Storage.t) = 
     let (taddr, _, _) = Test.originate Main.main init_storage 0mutez in
     let contr = Test.to_contract taddr in
     let addr = Tezos.address contr in
     (addr, taddr, contr)
 
-let base_storage = 0
+let base_storage: Main.Storage.t = {
+	user_map = Map.empty;
+	user_blacklist = [];
+	admin_list = Map.empty;
+	has_paid = Map.empty;
+}

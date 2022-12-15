@@ -19,7 +19,7 @@ let get_tier(count:int) : Storage.tier =
 	else if(count < 20) then Bronze
 	else if(count < 30) then Gold
 	else Platinum
-	
+
 // Assert List
 let assert_admin(_assert_admin_param, store: Parameter.assert_admin_param * Storage.t) : unit =
 	match  Map.find_opt(Tezos.get_sender():address) store.admin_list with
