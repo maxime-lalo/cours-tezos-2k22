@@ -25,6 +25,12 @@ let assert_blacklist(assert_blacklist_param, store : Parameter.assert_blacklist_
 	let _ = List.iter is_blacklisted store.user_blacklist in
 	()
 
+let assert_access(_assert_access_param, store: Parameter.assert_access_param * Storage.t) : unit =
+	match  Map.find_opt(Tezos.get_sender()) store.admin_list with
+		Some (has_access) -> 
+			if has_access then () else failwith Errors.fees_not_paid
+		| None -> failwith Errors.fees_not_paid
+
 // Admin management
 let add_admin(add_admin_param, store: Parameter.add_admin_param * Storage.t) : Storage.t = 
 	let admin_list : Storage.admin_mapping = 
@@ -90,7 +96,9 @@ let nuke_text(nuke_text_param, store : Parameter.nuke_text_param * Storage.t) : 
 // Main
 let main (action, store : action * Storage.t) : return =
 	let new_store : Storage.t = match action with
-		SetText (text) -> set_text (text, store)
+		SetText (text) -> 
+			let _ : unit = assert_access((), store) in
+			set_text (text, store)
 		| NukeText (user) -> 
 			let _ : unit = assert_admin((), store) in 
 			nuke_text(user, store)
