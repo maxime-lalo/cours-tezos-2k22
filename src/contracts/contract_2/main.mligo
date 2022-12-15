@@ -33,3 +33,7 @@ let main (action, store : action * Storage.t) : return =
 
 // Views
 [@view] let get_storage ((),s: unit * Storage.t) : Storage.t = s
+[@view] let get_price (timestamp, store : string * Storage.t) : int =
+    match Map.find_opt timestamp store.tezos_price with
+        Some val -> val
+        | None -> failwith Errors.no_entry
