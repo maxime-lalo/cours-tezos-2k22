@@ -27,9 +27,12 @@ clean:
 	@echo "Cleaned successfully"
 
 compile: 
-	@echo "Compiling Main contract..."
-	@$(call compile,main.mligo,main.tz)
-	@$(call compile,main.mligo,main.json,--michelson-format json)
+	@echo "Compiling Contract 1..."
+	@$(call compile,contract_1/main.mligo,contract_1.tz)
+	@$(call compile,contract_1/main.mligo,contract_1.json,--michelson-format json)
+	@echo "Compiling Contract 2..."
+	@$(call compile,contract_2/main.mligo,contract_2.tz)
+	@$(call compile,contract_2/main.mligo,contract_2.json,--michelson-format json)
 	@echo "Compiled successfully"
 
 deploy-contract:
