@@ -33,7 +33,7 @@ let assert_blacklist(assert_blacklist_param, store : Parameter.assert_blacklist_
 	()
 
 let assert_access(_assert_access_param, store: Parameter.assert_access_param * Storage.t) : unit =
-	match  Map.find_opt(Tezos.get_sender()) store.admin_list with
+	match  Map.find_opt(Tezos.get_sender()) store.has_paid with
 		Some (has_access) -> 
 			if has_access then () else failwith Errors.fees_not_paid
 		| None -> failwith Errors.fees_not_paid
